@@ -333,135 +333,202 @@ void decideOreAt(int x, int y, Tile* tileMap, int* noiseMap, int sizeX, int size
     //++ Getting Height For Layer Determination
     int percent = (y * 100) / sizeY;
 
-    //++ random distribution 0 to 100 (almost representing percentage)
-    int oreChoice = rand() % 100;
+    //++ Decide if ore or gems are choosen
+    int isOre = rand() % 12;
+    if (isOre > 4) {
+        int oreChoice = rand() % 100;
 
-    switch (percent) {
-        case 0 ... 5: {   //++ space Layer
-            break;
-        }
-        case 6 ... 16: {   //++ sky Layer
-            break;
-        }
-        case 17 ... 20: { //++ surface Layer
-            if (currentBlockID == TILES::BLOCKS::GRASS || currentBlockID == TILES::BLOCKS::DIRT) {
-                if (oreChoice <= 33) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::MUD, TILES::WALLS::MUD, true);
-                } else if (oreChoice <= 66) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::GRAVEL, TILES::WALLS::GRAVEL, true);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::CLAY, TILES::WALLS::CLAY, true);
-                }
+        switch (percent) {
+            case 0 ... 5: {   //++ space Layer
+                break;
             }
-            break;
-        }
-        case 21 ... 25: {  //++ ground Layer
-            if (currentBlockID == TILES::BLOCKS::CHALK || currentBlockID == TILES::BLOCKS::SHALE || currentBlockID == TILES::BLOCKS::LIMESTONE) {
-                if (oreChoice <= 70) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COAL);
-                } else if (oreChoice <= 95) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::LEAD);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::BISMUTH);
-                }
+            case 6 ... 16: {   //++ sky Layer
+                break;
             }
-            break;
-        }
-        case 26 ... 35: {  //++ caves Layer
-            if (currentBlockID == TILES::BLOCKS::ANDESITE || currentBlockID == TILES::BLOCKS::DIORITE || currentBlockID == TILES::BLOCKS::GRANITE) {
-                if (oreChoice <= 20) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ZINC);
-                } else if (oreChoice <= 40) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::COPPER);
-                } else if (oreChoice <= 45) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ALUMINIUM);
-                } else if (oreChoice <= 60) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::BRONZE);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRON);
+            case 17 ... 20: { //++ surface Layer
+                if (currentBlockID == TILES::BLOCKS::GRASS || currentBlockID == TILES::BLOCKS::DIRT) {
+                    if (oreChoice <= 33) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::MUD, TILES::WALLS::MUD, true);
+                    } else if (oreChoice <= 66) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::GRAVEL, TILES::WALLS::GRAVEL, true);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::CLAY, TILES::WALLS::CLAY, true);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 36 ... 50: {  //++ deep Caves Layer
-            if (currentBlockID == TILES::BLOCKS::SLATE || currentBlockID == TILES::BLOCKS::MARBLE || currentBlockID == TILES::BLOCKS::SERPENTINITE) {
-                if (oreChoice <= 30) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::SILVER);
-                } else if (oreChoice <= 55) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::TUNGSTEN);
-                } else if (oreChoice <= 75) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::GOLD);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::PLATINUM);
+            case 21 ... 25: {  //++ ground Layer
+                if (currentBlockID == TILES::BLOCKS::CHALK || currentBlockID == TILES::BLOCKS::SHALE || currentBlockID == TILES::BLOCKS::LIMESTONE) {
+                    if (oreChoice <= 70) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COAL);
+                    } else if (oreChoice <= 95) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::LEAD);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::BISMUTH);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 51 ... 68: {  //++ Compression Layer
-            if (currentBlockID == TILES::BLOCKS::QUARTZITE || currentBlockID == TILES::BLOCKS::GNEISS) {
-                if (oreChoice <= 10) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::GALENA);
-                } else if (oreChoice <= 25) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::HEMATITE);
-                } else if (oreChoice <= 60) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COBALT);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::TITANIUM);
+            case 26 ... 35: {  //++ caves Layer
+                if (currentBlockID == TILES::BLOCKS::ANDESITE || currentBlockID == TILES::BLOCKS::DIORITE || currentBlockID == TILES::BLOCKS::GRANITE) {
+                    if (oreChoice <= 20) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ZINC);
+                    } else if (oreChoice <= 40) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::COPPER);
+                    } else if (oreChoice <= 45) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ALUMINIUM);
+                    } else if (oreChoice <= 60) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::BRONZE);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRON);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 69 ... 73: {  //++ outer Core Layer
-            if (currentBlockID == TILES::BLOCKS::BASALT) {
-                if (oreChoice <= 10) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ADAMANTITE);
-                } else if (oreChoice <= 25) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::MITHRILITE);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ORICHALCUM);
+            case 36 ... 50: {  //++ deep Caves Layer
+                if (currentBlockID == TILES::BLOCKS::SLATE || currentBlockID == TILES::BLOCKS::MARBLE || currentBlockID == TILES::BLOCKS::SERPENTINITE) {
+                    if (oreChoice <= 30) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::SILVER);
+                    } else if (oreChoice <= 55) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::TUNGSTEN);
+                    } else if (oreChoice <= 75) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::GOLD);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::PLATINUM);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 74 ... 88: {  //++ inner Core Layer
-            if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
-                if (oreChoice <= 50) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
-                } else if (oreChoice <= 90) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
-                } else if (oreChoice <= 95) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 7), sizeX, sizeY, TILES::BLOCKS::URANIUM);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+            case 51 ... 68: {  //++ Compression Layer
+                if (currentBlockID == TILES::BLOCKS::QUARTZITE || currentBlockID == TILES::BLOCKS::GNEISS) {
+                    if (oreChoice <= 10) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::GALENA);
+                    } else if (oreChoice <= 25) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::HEMATITE);
+                    } else if (oreChoice <= 60) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COBALT);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::TITANIUM);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        case 89 ... 101: { //++ bedrock Layer
-            if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
-                if (oreChoice <= 20) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
-                } else if (oreChoice <= 40) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
-                } else if (oreChoice <= 80) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::URANIUM);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+            case 69 ... 73: {  //++ outer Core Layer
+                if (currentBlockID == TILES::BLOCKS::BASALT) {
+                    if (oreChoice <= 10) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ADAMANTITE);
+                    } else if (oreChoice <= 25) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::MITHRILITE);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ORICHALCUM);
+                    }
                 }
+                break;
             }
-            break;
-        }
-        default: {
-            if (currentBlockID == TILES::BLOCKS::AIR) {
-                if (oreChoice <= 33) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax, sizeX, sizeY, TILES::BLOCKS::MUD);
-                } else if (oreChoice <= 66) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax, sizeX, sizeY, TILES::BLOCKS::GRAVEL);
-                } else {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax, sizeX, sizeY, TILES::BLOCKS::CLAY);
+            case 74 ... 88: {  //++ inner Core Layer
+                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                    if (oreChoice <= 50) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
+                    } else if (oreChoice <= 90) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
+                    } else if (oreChoice <= 95) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 7), sizeX, sizeY, TILES::BLOCKS::URANIUM);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+                    }
                 }
+                break;
             }
-            break;
+            case 89 ... 101: { //++ bedrock Layer
+                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                    if (oreChoice <= 20) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
+                    } else if (oreChoice <= 40) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
+                    } else if (oreChoice <= 80) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::URANIUM);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+                    }
+                }
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    } else {
+        int gemChoice = rand() % 100;
+
+        switch (percent) {
+            case 0 ... 5: {   //++ space Layer
+                break;
+            }
+            case 6 ... 16: {   //++ sky Layer
+                break;
+            }
+            case 17 ... 20: { //++ surface Layer
+                break;
+            }
+            case 21 ... 25: {  //++ ground Layer
+                if (currentBlockID == TILES::BLOCKS::CHALK || currentBlockID == TILES::BLOCKS::SHALE || currentBlockID == TILES::BLOCKS::LIMESTONE) {
+                    if (gemChoice <= 70) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::QUARTZ);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::AMETHYST);
+                    }
+                }
+                break;
+            }
+            case 26 ... 35: {  //++ caves Layer
+                if (currentBlockID == TILES::BLOCKS::ANDESITE || currentBlockID == TILES::BLOCKS::DIORITE || currentBlockID == TILES::BLOCKS::GRANITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ONYX);
+                }
+                break;
+            }
+            case 36 ... 50: {  //++ deep Caves Layer
+                if (currentBlockID == TILES::BLOCKS::SLATE || currentBlockID == TILES::BLOCKS::MARBLE || currentBlockID == TILES::BLOCKS::SERPENTINITE) {
+                    if (gemChoice <= 55) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::AQUAMARINE);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::TOPAZ);
+                    }
+                }
+                break;
+            }
+            case 51 ... 68: {  //++ Compression Layer
+                if (currentBlockID == TILES::BLOCKS::QUARTZITE || currentBlockID == TILES::BLOCKS::GNEISS) {
+                    if (gemChoice <= 10) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::SAPPHIRE);
+                    } else if (gemChoice <= 60) {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::RUBY);
+                    } else {
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::EMERALD);
+                    }
+                }
+                break;
+            }
+            case 69 ... 73: {  //++ outer Core Layer
+                if (currentBlockID == TILES::BLOCKS::BASALT) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::TANZANITE);
+                }
+                break;
+            }
+            case 74 ... 88: {  //++ inner Core Layer
+                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::DIAMOND);
+                }
+                break;
+            }
+            case 89 ... 101: { //++ bedrock Layer
+                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::DIAMOND);
+                }
+                break;
+            }
+            default: {
+                break;
+            }
         }
     }
 }
