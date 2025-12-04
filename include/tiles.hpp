@@ -18,129 +18,128 @@ namespace TILES {
 
             //++ Surface
                 GRASS           = 3,
-                DIRT            = 4,
-                CLAY            = 5,
-                MUD             = 6,
-                STONE           = 7,
-                SAND            = 8,
-                GRAVEL          = 9,
-                SANDSTONE       = 10,
+                JUNGLEGRASS     = 4,
+                DIRT            = 5,
+                CLAY            = 6,
+                MUD             = 7,
+                STONE           = 8,
+                SAND            = 9,
+                GRAVEL          = 10,
+                SANDSTONE       = 11,
 
             //++ Ground
                 //-> Rocks
-                CHALK           = 11,
-                SHALE           = 12,
-                LIMESTONE       = 13,
+                CHALK           = 12,
+                SHALE           = 13,
+                LIMESTONE       = 14,
 
                 //-> Ores / Minerals
-                COAL            = 14,
-                COALORE         = 15,
-                LEAD            = 16,
-                LEADORE         = 17,
-                BISMUTH         = 18,
-                BISMUTHORE      = 19,
-
+                COAL            = 15,
+                COALORE         = 16,
+                LEAD            = 17,
+                LEADORE         = 18,
+                BISMUTH         = 19,
+                BISMUTHORE      = 20,
                 //-> Gemstones
-                QUARTZ          = 20,
-                AMETHYST        = 21,
+                QUARTZ          = 21,
+                AMETHYST        = 22,
 
 
             //++ Caves Layer
                 //-> Rocks
-                ANDESITE        = 21,
-                DIORITE         = 22,
-                GRANITE         = 23,
+                ANDESITE        = 23,
+                DIORITE         = 24,
+                GRANITE         = 25,
                 
                 //-> Ores / Minerals
-                ZINC            = 24,
-                ZINCORE         = 25,
-                COPPER          = 26,
-                COPPERORE       = 27,
-                ALUMINIUM       = 28,
-                ALUMINIUMORE    = 29,
-                BRONZE          = 30,
-                BRONZEORE       = 31,
-                IRON            = 32,
-                IRONORE         = 33,
+                ZINC            = 26,
+                ZINCORE         = 27,
+                COPPER          = 28,
+                COPPERORE       = 29,
+                ALUMINIUM       = 30,
+                ALUMINIUMORE    = 31,
+                BRONZE          = 32,
+                BRONZEORE       = 33,
+                IRON            = 34,
+                IRONORE         = 35,
 
                 //-> Gemstones
-                ONYX            = 34,
-
+                ONYX            = 36,
 
             //++ Deep Caves Layer
                 //-> Rocks
-                SLATE           = 35,
-                MARBLE          = 36,
-                SERPENTINITE    = 37,
+                SLATE           = 37,
+                MARBLE          = 38,
+                SERPENTINITE    = 39,
                 
                 //-> Ores / Minerals
-                SILVER          = 37,
-                SILVERORE       = 38,
-                TUNGSTEN        = 39,
-                TUNGSTENORE     = 40,
-                GOLD            = 41,
-                GOLDORE         = 42,
-                PLATINUM        = 43,
-                PLATINUMORE     = 44,
+                SILVER          = 40,
+                SILVERORE       = 41,
+                TUNGSTEN        = 42,
+                TUNGSTENORE     = 43,
+                GOLD            = 44,
+                GOLDORE         = 45,
+                PLATINUM        = 46,
+                PLATINUMORE     = 47,
 
                 //-> Gemstones
-                AQUAMARINE      = 45,
-                TOPAZ           = 46,
+                AQUAMARINE      = 48,
+                TOPAZ           = 49,
             
 
             //++ Compression Layer
                 //-> Rocks
-                QUARTZITE       = 47,
-                GNEISS          = 48,
+                QUARTZITE       = 50,
+                GNEISS          = 51,
                 
                 //-> Ores / Minerals
-                GALENA          = 49,
-                GALENAORE       = 50,
-                HEMATITE        = 51,
-                HEMATITEORE     = 52,
-                COBALT          = 53,
-                COBALTORE       = 54,
-                TITANIUM        = 55,
-                TITANIUMORE     = 56,
+                GALENA          = 52,
+                GALENAORE       = 53,
+                HEMATITE        = 54,
+                HEMATITEORE     = 55,
+                COBALT          = 56,
+                COBALTORE       = 57,
+                TITANIUM        = 58,
+                TITANIUMORE     = 59,
 
                 //-> Gemstones
-                SAPPHIRE        = 57,
-                RUBY            = 58,
-                EMERALD         = 59,
+                SAPPHIRE        = 60,
+                RUBY            = 61,
+                EMERALD         = 62,
             
 
             //++ Outer Core Layer
                 //-> Rocks
-                BASALT          = 60,
+                BASALT          = 63,
                 
                 //-> Ores / Minerals
-                ADAMANTITE      = 61,
-                ADAMANTITEORE   = 62,
-                MITHRILITE      = 63,
-                MITHRILITEORE   = 64,
-                ORICHALCUM      = 65,
-                ORICHALCUMORE   = 66,
+                ADAMANTITE      = 64,
+                ADAMANTITEORE   = 65,
+                MITHRILITE      = 66,
+                MITHRILITEORE   = 67,
+                ORICHALCUM      = 68,
+                ORICHALCUMORE   = 69,
 
                 //-> Gemstones
-                TANZANITE       = 67,
+                TANZANITE       = 70,
             
 
             //++ Inner Core Layer
                 //-> Rocks
-                KIMBERLITE      = 68,
+                KIMBERLITE      = 71,
                 
                 //-> Ores / Minerals
-                OSMIUM          = 69,
-                OSMIUMORE       = 70,
-                IRIDIUM         = 71,
-                IRIDIUMORE      = 72,
-                URANIUM         = 73,
-                URANIUMORE      = 74,
-                PLUTONIUM       = 75,
-                PLUTONIUMORE    = 76,
+                OSMIUM          = 72,
+                OSMIUMORE       = 73,
+                IRIDIUM         = 74,
+                IRIDIUMORE      = 75,
+                URANIUM         = 76,
+                URANIUMORE      = 77,
+                PLUTONIUM       = 78,
+                PLUTONIUMORE    = 79,
 
                 //-> Gemstones
-                DIAMOND         = 78,
+                DIAMOND         = 80,
             
 
 
@@ -159,129 +158,128 @@ namespace TILES {
 
             //++ Surface
                 GRASS           = 3,
-                DIRT            = 4,
-                CLAY            = 5,
-                MUD             = 6,
-                STONE           = 7,
-                SAND            = 8,
-                GRAVEL          = 9,
-                SANDSTONE       = 10,
+                JUNGLEGRASS     = 4,
+                DIRT            = 5,
+                CLAY            = 6,
+                MUD             = 7,
+                STONE           = 8,
+                SAND            = 9,
+                GRAVEL          = 10,
+                SANDSTONE       = 11,
 
             //++ Ground
                 //-> Rocks
-                CHALK           = 11,
-                SHALE           = 12,
-                LIMESTONE       = 13,
+                CHALK           = 12,
+                SHALE           = 13,
+                LIMESTONE       = 14,
 
                 //-> Ores / Minerals
-                COAL            = 14,
-                COALORE         = 15,
-                LEAD            = 16,
-                LEADORE         = 17,
-                BISMUTH         = 18,
-                BISMUTHORE      = 19,
-
+                COAL            = 15,
+                COALORE         = 16,
+                LEAD            = 17,
+                LEADORE         = 18,
+                BISMUTH         = 19,
+                BISMUTHORE      = 20,
                 //-> Gemstones
-                QUARTZ          = 20,
-                AMETHYST        = 21,
+                QUARTZ          = 21,
+                AMETHYST        = 22,
 
 
             //++ Caves Layer
                 //-> Rocks
-                ANDESITE        = 21,
-                DIORITE         = 22,
-                GRANITE         = 23,
+                ANDESITE        = 23,
+                DIORITE         = 24,
+                GRANITE         = 25,
                 
                 //-> Ores / Minerals
-                ZINC            = 24,
-                ZINCORE         = 25,
-                COPPER          = 26,
-                COPPERORE       = 27,
-                ALUMINIUM       = 28,
-                ALUMINIUMORE    = 29,
-                BRONZE          = 30,
-                BRONZEORE       = 31,
-                IRON            = 32,
-                IRONORE         = 33,
+                ZINC            = 26,
+                ZINCORE         = 27,
+                COPPER          = 28,
+                COPPERORE       = 29,
+                ALUMINIUM       = 30,
+                ALUMINIUMORE    = 31,
+                BRONZE          = 32,
+                BRONZEORE       = 33,
+                IRON            = 34,
+                IRONORE         = 35,
 
                 //-> Gemstones
-                ONYX            = 34,
-
+                ONYX            = 36,
 
             //++ Deep Caves Layer
                 //-> Rocks
-                SLATE           = 35,
-                MARBLE          = 36,
-                SERPENTINITE    = 37,
+                SLATE           = 37,
+                MARBLE          = 38,
+                SERPENTINITE    = 39,
                 
                 //-> Ores / Minerals
-                SILVER          = 37,
-                SILVERORE       = 38,
-                TUNGSTEN        = 39,
-                TUNGSTENORE     = 40,
-                GOLD            = 41,
-                GOLDORE         = 42,
-                PLATINUM        = 43,
-                PLATINUMORE     = 44,
+                SILVER          = 40,
+                SILVERORE       = 41,
+                TUNGSTEN        = 42,
+                TUNGSTENORE     = 43,
+                GOLD            = 44,
+                GOLDORE         = 45,
+                PLATINUM        = 46,
+                PLATINUMORE     = 47,
 
                 //-> Gemstones
-                AQUAMARINE      = 45,
-                TOPAZ           = 46,
+                AQUAMARINE      = 48,
+                TOPAZ           = 49,
             
 
             //++ Compression Layer
                 //-> Rocks
-                QUARTZITE       = 47,
-                GNEISS          = 48,
+                QUARTZITE       = 50,
+                GNEISS          = 51,
                 
                 //-> Ores / Minerals
-                GALENA          = 49,
-                GALENAORE       = 50,
-                HEMATITE        = 51,
-                HEMATITEORE     = 52,
-                COBALT          = 53,
-                COBALTORE       = 54,
-                TITANIUM        = 55,
-                TITANIUMORE     = 56,
+                GALENA          = 52,
+                GALENAORE       = 53,
+                HEMATITE        = 54,
+                HEMATITEORE     = 55,
+                COBALT          = 56,
+                COBALTORE       = 57,
+                TITANIUM        = 58,
+                TITANIUMORE     = 59,
 
                 //-> Gemstones
-                SAPPHIRE        = 57,
-                RUBY            = 58,
-                EMERALD         = 59,
+                SAPPHIRE        = 60,
+                RUBY            = 61,
+                EMERALD         = 62,
             
 
             //++ Outer Core Layer
                 //-> Rocks
-                BASALT          = 60,
+                BASALT          = 63,
                 
                 //-> Ores / Minerals
-                ADAMANTITE      = 61,
-                ADAMANTITEORE   = 62,
-                MITHRILITE      = 63,
-                MITHRILITEORE   = 64,
-                ORICHALCUM      = 65,
-                ORICHALCUMORE   = 66,
+                ADAMANTITE      = 64,
+                ADAMANTITEORE   = 65,
+                MITHRILITE      = 66,
+                MITHRILITEORE   = 67,
+                ORICHALCUM      = 68,
+                ORICHALCUMORE   = 69,
 
                 //-> Gemstones
-                TANZANITE       = 67,
+                TANZANITE       = 70,
             
 
             //++ Inner Core Layer
                 //-> Rocks
-                KIMBERLITE      = 68,
+                KIMBERLITE      = 71,
                 
                 //-> Ores / Minerals
-                OSMIUM          = 69,
-                OSMIUMORE       = 70,
-                IRIDIUM         = 71,
-                IRIDIUMORE      = 72,
-                URANIUM         = 73,
-                URANIUMORE      = 74,
-                PLUTONIUM       = 75,
-                PLUTONIUMORE    = 76,
+                OSMIUM          = 72,
+                OSMIUMORE       = 73,
+                IRIDIUM         = 74,
+                IRIDIUMORE      = 75,
+                URANIUM         = 76,
+                URANIUMORE      = 77,
+                PLUTONIUM       = 78,
+                PLUTONIUMORE    = 79,
 
                 //-> Gemstones
-                DIAMOND         = 78,
+                DIAMOND         = 80,
             
 
 
@@ -307,9 +305,10 @@ namespace TILES {
 
             // Surface
             {BLOCKS::GRASS,        Color(34, 139, 34, 255)},
+            {BLOCKS::JUNGLEGRASS,  Color(17, 69, 17, 255)},
             {BLOCKS::DIRT,         Color(139, 69, 19, 255)},
             {BLOCKS::CLAY,         Color(190, 110, 60, 255)},
-            {BLOCKS::MUD,          Color(60, 30, 00, 255)},
+            {BLOCKS::MUD,          Color(60, 30, 10, 255)},
             {BLOCKS::STONE,        Color(128, 128, 128, 255)},
             {BLOCKS::SAND,         Color(237, 201, 175, 255)},
             {BLOCKS::GRAVEL,       Color(150, 150, 150, 255)},

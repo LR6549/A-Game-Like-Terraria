@@ -126,9 +126,48 @@ Directions array:
 !! Filling Caves with water should only go down, left and right, not up.!!
 */
 void fillArea(Tile* tileMap, int* noiseMap, int targetX, int targetY, int limitMin, int limitMax, int sizeX, int sizeY, uint16_t blockID, uint16_t wallID = TILES::WALLS::NOCHANGE, bool replaceAir = false, bool airWithWalls = true, std::array<bool,4> directions = {true, true, true, true}) {
-    //JFLX::log("World Generation: ", "Filling area.", JFLX::LOGTYPE::INFO);
     fillAreaRecursion(tileMap, noiseMap, targetX, targetY, limitMin, limitMax, sizeX, sizeY, blockID, wallID, replaceAir, airWithWalls, directions);
-    //JFLX::log("World Generation: ", "Finished Filling area.", JFLX::LOGTYPE::INFO);
+}
+
+void fillCircularAreaFillCall(Tile* tileMap, int targetX, int targetY, int sizeX, int sizeY, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapBlock, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapWall) {
+    if (targetX < 0 || targetX >= sizeX || targetY < 0 || targetY >= sizeY) {
+        return;
+    }
+
+    int index = targetY * sizeX + targetX;
+    uint16_t targetBlockID = tileMap[index].blockID;
+    uint16_t targetWallID = tileMap[index].wallID;
+
+    if (targetBlockID == TILES::BLOCKS::AIR && targetWallID == TILES::WALLS::AIR) {
+        return;
+    }
+
+    if (replaceMapBlock->find(targetBlockID) != replaceMapBlock->end()) {
+        uint16_t blockID = replaceMapBlock->at(targetBlockID)[0];
+        uint16_t wallID = replaceMapBlock->at(targetBlockID)[1]; 
+        setTileIDS(tileMap[index], blockID, wallID);
+    } else if (replaceMapWall->find(targetWallID) != replaceMapWall->end()) {
+        uint16_t blockID = replaceMapWall->at(targetWallID)[0]; 
+        uint16_t wallID = replaceMapWall->at(targetWallID)[1]; 
+        setTileIDS(tileMap[index], blockID, wallID);
+    }
+}
+
+/*
+? No longer used yet still helpful Full Explanation of the Midpoint Circle Algorithm: https://www.youtube.com/watch?v=hpiILbMkF9w
+*/
+void fillCircularArea(Tile* tileMap, int centerX, int centerY, int radius, int sizeX, int sizeY, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapBlock, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapWall) {
+    int r2 = radius * radius;
+
+    for (int y = -radius; y <= radius; ++y) {
+        int y2 = y * y;
+
+        for (int x = -radius; x <= radius; ++x) {
+            if (x*x + y2 <= r2) {
+                fillCircularAreaFillCall(tileMap, centerX + x, centerY + y, sizeX, sizeY, replaceMapBlock, replaceMapWall);
+            }
+        }
+    }
 }
 
 void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int sizeX, int sizeY, int index) { //! Maybe Use 2nd map for the rock choices !!!
@@ -263,6 +302,7 @@ void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int
 }
 
 void setTilesByLayer(Tile* tileMap, int* noiseMapA, int* noiseMapB, int sizeX, int sizeY) {
+
     for (int y = 0; y < sizeY; ++y) {
         for (int x = 0; x < sizeX; ++x) {
             int index = y * sizeX + x;
@@ -335,7 +375,7 @@ void decideOreAt(int x, int y, Tile* tileMap, int* noiseMap, int sizeX, int size
 
     //++ Decide if ore or gems are choosen
     int isOre = rand() % 12;
-    if (isOre > 4) {
+    if (isOre > 2) {
         int oreChoice = rand() % 100;
 
         switch (percent) {
@@ -652,6 +692,12 @@ void generateWorld(const std::string worldName, int sizeTemplate, int seed, std:
     JFLX::perlinNoise(veinMap, sizeX, sizeY, seed, (125+(rand()%10)));
     JFLX::log("World Generation: ", "Completed Generating Perlin noise map.", JFLX::LOGTYPE::SUCCESS);
 
+    
+    if (tileMap == nullptr || perlinNoiseMap == nullptr || rockMap == nullptr || veinMap == nullptr) {
+        JFLX::log("World Generation: ", "One of the pointers is null! Can not continue Generation!", JFLX::LOGTYPE::ERROR);
+        return;
+    }
+
     //++ Set Tiles by Layer
     JFLX::log("World Generation: ", "Generate Layers.", JFLX::LOGTYPE::SUCCESS);
     setTilesByLayer(tileMap, perlinNoiseMap, rockMap, sizeX, sizeY);
@@ -666,6 +712,36 @@ void generateWorld(const std::string worldName, int sizeTemplate, int seed, std:
     JFLX::log("World Generation: ", "Generating Surface level.", JFLX::LOGTYPE::SUCCESS);
     generateSurfaceLevel(tileMap, sizeX, sizeY);
     JFLX::log("World Generation: ", "Finished Generating Surface level.", JFLX::LOGTYPE::SUCCESS);
+
+    //++ Create Jungle Biome
+    JFLX::log("World Generation: ", "Generating Jungle Biome.", JFLX::LOGTYPE::SUCCESS);
+    std::unordered_map<uint16_t, std::array<uint16_t, 2>> replaceMapBlock = {
+        {TILES::BLOCKS::GRASS,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::BLOCKS::DIRT,       {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::BLOCKS::SHALE,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::BLOCKS::ANDESITE,   {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::BLOCKS::SLATE,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::BLOCKS::GNEISS,     {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+    };
+
+    std::unordered_map<uint16_t, std::array<uint16_t, 2>> replaceMapWall = {
+        {TILES::WALLS::GRASS,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::WALLS::DIRT,        {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::WALLS::SHALE,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::WALLS::ANDESITE,    {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::WALLS::SLATE,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+        {TILES::WALLS::GNEISS,      {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+    };
+
+    int jungleRadius = static_cast<int>((sizeX/7)+(rand()%25));
+    int jungleHalfRadius = static_cast<int>(0.5*jungleRadius);
+    int jungleSecondRadius = static_cast<int>(0.85*jungleRadius);
+    int jungleX = rand() % sizeX;
+    int jungleY = static_cast<int>((sizeY/3) + (rand() % 25));
+
+    fillCircularArea(tileMap, jungleX, jungleY, jungleRadius, sizeX, sizeY, &replaceMapBlock, &replaceMapWall);
+    fillCircularArea(tileMap, jungleX, jungleY+jungleHalfRadius, jungleSecondRadius, sizeX, sizeY, &replaceMapBlock, &replaceMapWall);
+    JFLX::log("World Generation: ", "Finished Generating Jungle Biome at: {" + std::to_string(jungleX) + ", " + std::to_string(jungleY) + "} with radius " + std::to_string(jungleRadius) + ".", JFLX::LOGTYPE::SUCCESS);
 
     //++ Bedrock Level
     JFLX::log("World Generation: ", "Generating Bedrock level.", JFLX::LOGTYPE::SUCCESS);
