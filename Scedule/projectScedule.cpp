@@ -20,7 +20,7 @@ TODO LEGEND:
 _ Stats:
 - Project Begin: 20.11.2025
 - Created: 23.11.2025
-- Last Updated: 04.12.2025
+- Last Updated: 05.12.2025
 - Sanity: High
 
 */
