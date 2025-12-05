@@ -52,15 +52,15 @@ void generateAndSaveTilePreviewImage(Tile* tileMap, int sizeX, int sizeY, const 
 
     for (int i = 0; i < sizeX * sizeY; ++i) {
         Tile t = tileMap[i];
-        if (t.blockID == TILES::BLOCKS::AIR) {
-            img[i * 3 + 0] = std::clamp((TILES::COLORVALUES::COLORS[t.wallID].c_r - 25), 0, 255);;
-            img[i * 3 + 1] = std::clamp((TILES::COLORVALUES::COLORS[t.wallID].c_g - 25), 0, 255);;
-            img[i * 3 + 2] = std::clamp((TILES::COLORVALUES::COLORS[t.wallID].c_b - 25), 0, 255);;
+        if (t.blockID == TILES::BLOCKS::ID::AIR) {
+            img[i * 3 + 0] = std::clamp((TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.wallID)].c_r - 25), 0, 255);;
+            img[i * 3 + 1] = std::clamp((TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.wallID)].c_g - 25), 0, 255);;
+            img[i * 3 + 2] = std::clamp((TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.wallID)].c_b - 25), 0, 255);;
             continue;
         } else {
-            img[i * 3 + 0] = TILES::COLORVALUES::COLORS[t.blockID].c_r;
-            img[i * 3 + 1] = TILES::COLORVALUES::COLORS[t.blockID].c_g;
-            img[i * 3 + 2] = TILES::COLORVALUES::COLORS[t.blockID].c_b;
+            img[i * 3 + 0] = TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.blockID)].c_r;
+            img[i * 3 + 1] = TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.blockID)].c_g;
+            img[i * 3 + 2] = TILES::COLORVALUES::COLORS[static_cast<uint16_t>(t.blockID)].c_b;
             continue;
         }
     }
@@ -74,14 +74,14 @@ void generateAndSaveTilePreviewImage(Tile* tileMap, int sizeX, int sizeY, const 
 }
 
 
-void fillAreaRecursion(Tile* tileMap, int* noiseMap, int targetX, int targetY, int limitMin, int limitMax, int sizeX, int sizeY, uint16_t blockID, uint16_t wallID = TILES::WALLS::NOCHANGE, bool replaceAir = false, bool airWithWalls = true, std::array<bool,4> directions = {true, true, true, true}) {
+void fillAreaRecursion(Tile* tileMap, int* noiseMap, int targetX, int targetY, int limitMin, int limitMax, int sizeX, int sizeY, TILES::BLOCKS::ID blockID, TILES::WALLS::ID wallID = TILES::WALLS::ID::NOCHANGE, bool replaceAir = false, bool airWithWalls = true, std::array<bool,4> directions = {true, true, true, true}) {
     if (targetX < 0 || targetX >= sizeX || targetY < 0 || targetY >= sizeY) {
         return;
     }
 
     int index = targetY * sizeX + targetX;
-    uint16_t targetBlockID = tileMap[index].blockID;
-    uint16_t targetWallID = tileMap[index].wallID;
+    TILES::BLOCKS::ID targetBlockID = tileMap[index].blockID;
+    TILES::WALLS::ID targetWallID = tileMap[index].wallID;
     int noiseValue = noiseMap[index];
 
 
@@ -89,14 +89,14 @@ void fillAreaRecursion(Tile* tileMap, int* noiseMap, int targetX, int targetY, i
         return;
     }
 
-    if (!replaceAir && targetBlockID == TILES::BLOCKS::AIR || replaceAir && airWithWalls && targetWallID == wallID || targetBlockID == blockID) {
+    if (!replaceAir && targetBlockID == TILES::BLOCKS::ID::AIR || replaceAir && airWithWalls && targetWallID == wallID || targetBlockID == blockID) {
         return;
     }
 
     if (replaceAir) {
         if (airWithWalls) {
-            if (targetBlockID == TILES::BLOCKS::AIR) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::NOCHANGE, wallID);
+            if (targetBlockID == TILES::BLOCKS::ID::AIR) {
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::NOCHANGE, wallID);
             } else {
                 setTileIDS(tileMap[index], blockID);
             }
@@ -125,30 +125,30 @@ Directions array:
 
 !! Filling Caves with water should only go down, left and right, not up.!!
 */
-void fillArea(Tile* tileMap, int* noiseMap, int targetX, int targetY, int limitMin, int limitMax, int sizeX, int sizeY, uint16_t blockID, uint16_t wallID = TILES::WALLS::NOCHANGE, bool replaceAir = false, bool airWithWalls = true, std::array<bool,4> directions = {true, true, true, true}) {
+void fillArea(Tile* tileMap, int* noiseMap, int targetX, int targetY, int limitMin, int limitMax, int sizeX, int sizeY, TILES::BLOCKS::ID blockID, TILES::WALLS::ID wallID = TILES::WALLS::ID::NOCHANGE, bool replaceAir = false, bool airWithWalls = true, std::array<bool,4> directions = {true, true, true, true}) {
     fillAreaRecursion(tileMap, noiseMap, targetX, targetY, limitMin, limitMax, sizeX, sizeY, blockID, wallID, replaceAir, airWithWalls, directions);
 }
 
-void fillCircularAreaFillCall(Tile* tileMap, int targetX, int targetY, int sizeX, int sizeY, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapBlock, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapWall) {
+void fillCircularAreaFillCall(Tile* tileMap, int targetX, int targetY, int sizeX, int sizeY, std::unordered_map<TILES::BLOCKS::ID, TILES::TileArray>* replaceMapBlock, std::unordered_map<TILES::WALLS::ID, TILES::TileArray>* replaceMapWall) {
     if (targetX < 0 || targetX >= sizeX || targetY < 0 || targetY >= sizeY) {
         return;
     }
 
     int index = targetY * sizeX + targetX;
-    uint16_t targetBlockID = tileMap[index].blockID;
-    uint16_t targetWallID = tileMap[index].wallID;
+    TILES::BLOCKS::ID targetBlockID = tileMap[index].blockID;
+    TILES::WALLS::ID targetWallID = tileMap[index].wallID;
 
-    if (targetBlockID == TILES::BLOCKS::AIR && targetWallID == TILES::WALLS::AIR) {
+    if (targetBlockID == TILES::BLOCKS::ID::AIR && targetWallID == TILES::WALLS::ID::AIR) {
         return;
     }
 
     if (replaceMapBlock->find(targetBlockID) != replaceMapBlock->end()) {
-        uint16_t blockID = replaceMapBlock->at(targetBlockID)[0];
-        uint16_t wallID = replaceMapBlock->at(targetBlockID)[1]; 
+        TILES::BLOCKS::ID blockID = replaceMapBlock->at(targetBlockID).block;
+        TILES::WALLS::ID wallID = replaceMapBlock->at(targetBlockID).wall; 
         setTileIDS(tileMap[index], blockID, wallID);
     } else if (replaceMapWall->find(targetWallID) != replaceMapWall->end()) {
-        uint16_t blockID = replaceMapWall->at(targetWallID)[0]; 
-        uint16_t wallID = replaceMapWall->at(targetWallID)[1]; 
+        TILES::BLOCKS::ID blockID = replaceMapWall->at(targetWallID).block; 
+        TILES::WALLS::ID wallID = replaceMapWall->at(targetWallID).wall; 
         setTileIDS(tileMap[index], blockID, wallID);
     }
 }
@@ -156,7 +156,7 @@ void fillCircularAreaFillCall(Tile* tileMap, int targetX, int targetY, int sizeX
 /*
 ? No longer used yet still helpful Full Explanation of the Midpoint Circle Algorithm: https://www.youtube.com/watch?v=hpiILbMkF9w
 */
-void fillCircularArea(Tile* tileMap, int centerX, int centerY, int radius, int sizeX, int sizeY, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapBlock, std::unordered_map<uint16_t, std::array<uint16_t, 2>>* replaceMapWall) {
+void fillCircularArea(Tile* tileMap, int centerX, int centerY, int radius, int sizeX, int sizeY, std::unordered_map<TILES::BLOCKS::ID, TILES::TileArray>* replaceMapBlock, std::unordered_map<TILES::WALLS::ID, TILES::TileArray>* replaceMapWall) {
     int r2 = radius * radius;
 
     for (int y = -radius; y <= radius; ++y) {
@@ -179,37 +179,37 @@ void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int
     //++ Height Distribution: noiseValue < Value = Air/Block, noiseValue >= Value = Wall
     switch (percent) {
         case 0 ... 5: { //++ space Layer
-            setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::AIR);
+            setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::AIR);
             break;
         }
         case 6 ... 15: { //++ sky Layer
-            setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::AIR);
+            setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::AIR);
             break;
         }
         case 16 ... 20: { //++ surface Layer
             if (noiseValueA < 155) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::DIRT, TILES::WALLS::DIRT);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::DIRT, TILES::WALLS::ID::DIRT);
             } else {
-                setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::DIRT);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::DIRT);
             }
             break;
         }
         case 21 ... 25: { //++ ground Layer
             if (noiseValueA < 143) {
                 if (noiseValueB < 80) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::CHALK, TILES::WALLS::CHALK);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::CHALK, TILES::WALLS::ID::CHALK);
                 } else if (noiseValueB < 110) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::LIMESTONE, TILES::WALLS::LIMESTONE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::LIMESTONE, TILES::WALLS::ID::LIMESTONE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::SHALE, TILES::WALLS::SHALE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::SHALE, TILES::WALLS::ID::SHALE);
                 }
             } else {
                 if (noiseValueB < 80) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::CHALK);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::CHALK);
                 } else if (noiseValueB < 110) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::LIMESTONE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::LIMESTONE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::SHALE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::SHALE);
                 }
             }
             break;
@@ -217,19 +217,19 @@ void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int
         case 26 ... 35: { //++ caves Layer
             if (noiseValueA < 143) {
                 if (noiseValueB < 80) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::GRANITE, TILES::WALLS::GRANITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::GRANITE, TILES::WALLS::ID::GRANITE);
                 } else if (noiseValueB < 100) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::DIORITE, TILES::WALLS::DIORITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::DIORITE, TILES::WALLS::ID::DIORITE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::ANDESITE, TILES::WALLS::ANDESITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::ANDESITE, TILES::WALLS::ID::ANDESITE);
                 }
             } else {
                 if (noiseValueB < 80) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::GRANITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::GRANITE);
                 } else if (noiseValueB < 100) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::DIORITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::DIORITE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::ANDESITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::ANDESITE);
                 }
             }
             break;
@@ -237,19 +237,19 @@ void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int
         case 36 ... 50: { //++ deep Caves Layer
             if (noiseValueA < 143) {
                 if (noiseValueB < 70) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::SERPENTINITE, TILES::WALLS::SERPENTINITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::SERPENTINITE, TILES::WALLS::ID::SERPENTINITE);
                 } else if (noiseValueB < 90) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::MARBLE, TILES::WALLS::MARBLE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::MARBLE, TILES::WALLS::ID::MARBLE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::SLATE, TILES::WALLS::SLATE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::SLATE, TILES::WALLS::ID::SLATE);
                 }
             } else {
                 if (noiseValueB < 70) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::SERPENTINITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::SERPENTINITE);
                 } else if (noiseValueB < 90) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::MARBLE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::MARBLE);
                 } else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::SLATE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::SLATE);
                 }
             }
             break;
@@ -257,45 +257,45 @@ void setLayerAt(int x, int y, Tile* tileMap, int* noiseMapA, int* noiseMapB, int
         case 51 ... 68: { //++ Compression Layer
             if (noiseValueA < 143) {
                 if (noiseValueB < 95) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::QUARTZITE, TILES::WALLS::QUARTZITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::QUARTZITE, TILES::WALLS::ID::QUARTZITE);
                 }  else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::GNEISS, TILES::WALLS::GNEISS);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::GNEISS, TILES::WALLS::ID::GNEISS);
                 }
             } else {
                 if (noiseValueB < 95) {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::QUARTZITE);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::QUARTZITE);
                 }  else {
-                    setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::GNEISS);
+                    setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::GNEISS);
                 }
             }
             break;
         }
         case 69 ... 73: { //++ outer Core Layer
             if (noiseValueA < 143) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::BASALT, TILES::WALLS::BASALT);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::BASALT, TILES::WALLS::ID::BASALT);
             } else {
-                setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::BASALT);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::BASALT);
             }
             break;
         }
         case 74 ... 88: {//++ inner Core Layer
             if (noiseValueA < 143) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::KIMBERLITE, TILES::WALLS::KIMBERLITE);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::KIMBERLITE, TILES::WALLS::ID::KIMBERLITE);
             } else {
-                setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::KIMBERLITE);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::KIMBERLITE);
             }
             break;
         }
         case 89 ... 101: { //++ bedrock Layer
             if (noiseValueA < 143) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::KIMBERLITE, TILES::WALLS::KIMBERLITE);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::KIMBERLITE, TILES::WALLS::ID::KIMBERLITE);
             } else {
-                setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::KIMBERLITE);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::KIMBERLITE);
             }
             break;
         }
         default: {
-            setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::AIR);
+            setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::AIR);
             break;
         }
     }
@@ -332,16 +332,16 @@ void generateSurfaceLevel(Tile* tileMap, int sizeX, int sizeY) {
         int targetHeight = 10+static_cast<int>(limit - 2.5*complexWave(x * 0.05));
 
         for (int y = targetHeight; y > 0; --y) {
-            setTileIDS(tileMap[y * sizeX + x], TILES::BLOCKS::AIR, TILES::WALLS::AIR);
+            setTileIDS(tileMap[y * sizeX + x], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::AIR);
         }
 
         
         for (int i = 1; i <= 1 + (rand() % 4); ++i) {
             int index = (targetHeight + i) * sizeX + x;
-            if (tileMap[index].blockID != TILES::BLOCKS::AIR) {
-                setTileIDS(tileMap[index], TILES::BLOCKS::GRASS, TILES::WALLS::GRASS);
+            if (tileMap[index].blockID != TILES::BLOCKS::ID::AIR) {
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::GRASS, TILES::WALLS::ID::GRASS);
             } else {
-                setTileIDS(tileMap[index], TILES::BLOCKS::AIR, TILES::WALLS::GRASS);
+                setTileIDS(tileMap[index], TILES::BLOCKS::ID::AIR, TILES::WALLS::ID::GRASS);
             }
         }
     }
@@ -354,19 +354,19 @@ void generateBedrockLevel(Tile* tileMap, int sizeX, int sizeY) {
         int targetHeight = static_cast<int>(limit + complexWave(x));
 
         for (int y = sizeY - 1; y > targetHeight; --y) {
-            setTileIDS(tileMap[y * sizeX + x], TILES::BLOCKS::BEDROCK, TILES::WALLS::BEDROCK);
+            setTileIDS(tileMap[y * sizeX + x], TILES::BLOCKS::ID::BEDROCK, TILES::WALLS::ID::BEDROCK);
         }
     }
 }
 
 void decideOreAt(int x, int y, Tile* tileMap, int* noiseMap, int sizeX, int sizeY, int index) {
     int noiseValue = noiseMap[index];
-    uint16_t currentBlockID = tileMap[index].blockID;
+    TILES::BLOCKS::ID currentBlockID = tileMap[index].blockID;
     
     int limitMin = 0;
     int limitMax = 75;
 
-    if (noiseValue > limitMax || noiseValue < limitMin || currentBlockID == TILES::BLOCKS::AIR) {
+    if (noiseValue > limitMax || noiseValue < limitMin || currentBlockID == TILES::BLOCKS::ID::AIR) {
         return;
     }
 
@@ -386,109 +386,109 @@ void decideOreAt(int x, int y, Tile* tileMap, int* noiseMap, int sizeX, int size
                 break;
             }
             case 17 ... 20: { //++ surface Layer
-                if (currentBlockID == TILES::BLOCKS::GRASS || currentBlockID == TILES::BLOCKS::DIRT) {
+                if (currentBlockID == TILES::BLOCKS::ID::GRASS || currentBlockID == TILES::BLOCKS::ID::DIRT) {
                     if (oreChoice <= 33) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::MUD, TILES::WALLS::MUD, true);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::MUD, TILES::WALLS::ID::MUD, true);
                     } else if (oreChoice <= 66) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::GRAVEL, TILES::WALLS::GRAVEL, true);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::ID::GRAVEL, TILES::WALLS::ID::GRAVEL, true);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::CLAY, TILES::WALLS::CLAY, true);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ID::CLAY, TILES::WALLS::ID::CLAY, true);
                     }
                 }
                 break;
             }
             case 21 ... 25: {  //++ ground Layer
-                if (currentBlockID == TILES::BLOCKS::CHALK || currentBlockID == TILES::BLOCKS::SHALE || currentBlockID == TILES::BLOCKS::LIMESTONE) {
+                if (currentBlockID == TILES::BLOCKS::ID::CHALK || currentBlockID == TILES::BLOCKS::ID::SHALE || currentBlockID == TILES::BLOCKS::ID::LIMESTONE) {
                     if (oreChoice <= 70) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COAL);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::COAL);
                     } else if (oreChoice <= 95) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::LEAD);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::ID::LEAD);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::BISMUTH);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::BISMUTH);
                     }
                 }
                 break;
             }
             case 26 ... 35: {  //++ caves Layer
-                if (currentBlockID == TILES::BLOCKS::ANDESITE || currentBlockID == TILES::BLOCKS::DIORITE || currentBlockID == TILES::BLOCKS::GRANITE) {
+                if (currentBlockID == TILES::BLOCKS::ID::ANDESITE || currentBlockID == TILES::BLOCKS::ID::DIORITE || currentBlockID == TILES::BLOCKS::ID::GRANITE) {
                     if (oreChoice <= 20) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ZINC);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::ZINC);
                     } else if (oreChoice <= 40) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::COPPER);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::ID::COPPER);
                     } else if (oreChoice <= 45) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ALUMINIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::ALUMINIUM);
                     } else if (oreChoice <= 60) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::BRONZE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::BRONZE);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRON);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::IRON);
                     }
                 }
                 break;
             }
             case 36 ... 50: {  //++ deep Caves Layer
-                if (currentBlockID == TILES::BLOCKS::SLATE || currentBlockID == TILES::BLOCKS::MARBLE || currentBlockID == TILES::BLOCKS::SERPENTINITE) {
+                if (currentBlockID == TILES::BLOCKS::ID::SLATE || currentBlockID == TILES::BLOCKS::ID::MARBLE || currentBlockID == TILES::BLOCKS::ID::SERPENTINITE) {
                     if (oreChoice <= 30) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::SILVER);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::SILVER);
                     } else if (oreChoice <= 55) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::TUNGSTEN);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::ID::TUNGSTEN);
                     } else if (oreChoice <= 75) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::GOLD);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::GOLD);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::PLATINUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::PLATINUM);
                     }
                 }
                 break;
             }
             case 51 ... 68: {  //++ Compression Layer
-                if (currentBlockID == TILES::BLOCKS::QUARTZITE || currentBlockID == TILES::BLOCKS::GNEISS) {
+                if (currentBlockID == TILES::BLOCKS::ID::QUARTZITE || currentBlockID == TILES::BLOCKS::ID::GNEISS) {
                     if (oreChoice <= 10) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::GALENA);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::ID::GALENA);
                     } else if (oreChoice <= 25) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::HEMATITE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::ID::HEMATITE);
                     } else if (oreChoice <= 60) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::COBALT);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::COBALT);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::TITANIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::TITANIUM);
                     }
                 }
                 break;
             }
             case 69 ... 73: {  //++ outer Core Layer
-                if (currentBlockID == TILES::BLOCKS::BASALT) {
+                if (currentBlockID == TILES::BLOCKS::ID::BASALT) {
                     if (oreChoice <= 10) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ADAMANTITE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ID::ADAMANTITE);
                     } else if (oreChoice <= 25) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::MITHRILITE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::MITHRILITE);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ORICHALCUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::ORICHALCUM);
                     }
                 }
                 break;
             }
             case 74 ... 88: {  //++ inner Core Layer
-                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                if (currentBlockID == TILES::BLOCKS::ID::KIMBERLITE) {
                     if (oreChoice <= 50) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 25), sizeX, sizeY, TILES::BLOCKS::ID::OSMIUM);
                     } else if (oreChoice <= 90) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::IRIDIUM);
                     } else if (oreChoice <= 95) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 7), sizeX, sizeY, TILES::BLOCKS::URANIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 7), sizeX, sizeY, TILES::BLOCKS::ID::URANIUM);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::ID::PLUTONIUM);
                     }
                 }
                 break;
             }
             case 89 ... 101: { //++ bedrock Layer
-                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
+                if (currentBlockID == TILES::BLOCKS::ID::KIMBERLITE) {
                     if (oreChoice <= 20) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::OSMIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::OSMIUM);
                     } else if (oreChoice <= 40) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::IRIDIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::IRIDIUM);
                     } else if (oreChoice <= 80) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::URANIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::URANIUM);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::PLUTONIUM);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::PLUTONIUM);
                     }
                 }
                 break;
@@ -511,58 +511,58 @@ void decideOreAt(int x, int y, Tile* tileMap, int* noiseMap, int sizeX, int size
                 break;
             }
             case 21 ... 25: {  //++ ground Layer
-                if (currentBlockID == TILES::BLOCKS::CHALK || currentBlockID == TILES::BLOCKS::SHALE || currentBlockID == TILES::BLOCKS::LIMESTONE) {
+                if (currentBlockID == TILES::BLOCKS::ID::CHALK || currentBlockID == TILES::BLOCKS::ID::SHALE || currentBlockID == TILES::BLOCKS::ID::LIMESTONE) {
                     if (gemChoice <= 70) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::QUARTZ);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::ID::QUARTZ);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::AMETHYST);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::AMETHYST);
                     }
                 }
                 break;
             }
             case 26 ... 35: {  //++ caves Layer
-                if (currentBlockID == TILES::BLOCKS::ANDESITE || currentBlockID == TILES::BLOCKS::DIORITE || currentBlockID == TILES::BLOCKS::GRANITE) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ONYX);
+                if (currentBlockID == TILES::BLOCKS::ID::ANDESITE || currentBlockID == TILES::BLOCKS::ID::DIORITE || currentBlockID == TILES::BLOCKS::ID::GRANITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 15), sizeX, sizeY, TILES::BLOCKS::ID::ONYX);
                 }
                 break;
             }
             case 36 ... 50: {  //++ deep Caves Layer
-                if (currentBlockID == TILES::BLOCKS::SLATE || currentBlockID == TILES::BLOCKS::MARBLE || currentBlockID == TILES::BLOCKS::SERPENTINITE) {
+                if (currentBlockID == TILES::BLOCKS::ID::SLATE || currentBlockID == TILES::BLOCKS::ID::MARBLE || currentBlockID == TILES::BLOCKS::ID::SERPENTINITE) {
                     if (gemChoice <= 55) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::AQUAMARINE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 20), sizeX, sizeY, TILES::BLOCKS::ID::AQUAMARINE);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::TOPAZ);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::TOPAZ);
                     }
                 }
                 break;
             }
             case 51 ... 68: {  //++ Compression Layer
-                if (currentBlockID == TILES::BLOCKS::QUARTZITE || currentBlockID == TILES::BLOCKS::GNEISS) {
+                if (currentBlockID == TILES::BLOCKS::ID::QUARTZITE || currentBlockID == TILES::BLOCKS::ID::GNEISS) {
                     if (gemChoice <= 10) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::SAPPHIRE);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::ID::SAPPHIRE);
                     } else if (gemChoice <= 60) {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::RUBY);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 30), sizeX, sizeY, TILES::BLOCKS::ID::RUBY);
                     } else {
-                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::EMERALD);
+                        fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::EMERALD);
                     }
                 }
                 break;
             }
             case 69 ... 73: {  //++ outer Core Layer
-                if (currentBlockID == TILES::BLOCKS::BASALT) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::TANZANITE);
+                if (currentBlockID == TILES::BLOCKS::ID::BASALT) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 40), sizeX, sizeY, TILES::BLOCKS::ID::TANZANITE);
                 }
                 break;
             }
             case 74 ... 88: {  //++ inner Core Layer
-                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::DIAMOND);
+                if (currentBlockID == TILES::BLOCKS::ID::KIMBERLITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 5), sizeX, sizeY, TILES::BLOCKS::ID::DIAMOND);
                 }
                 break;
             }
             case 89 ... 101: { //++ bedrock Layer
-                if (currentBlockID == TILES::BLOCKS::KIMBERLITE) {
-                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::DIAMOND);
+                if (currentBlockID == TILES::BLOCKS::ID::KIMBERLITE) {
+                    fillArea(tileMap, noiseMap, x, y, limitMin, limitMax+ (rand() % 10), sizeX, sizeY, TILES::BLOCKS::ID::DIAMOND);
                 }
                 break;
             }
@@ -715,22 +715,22 @@ void generateWorld(const std::string worldName, int sizeTemplate, int seed, std:
 
     //++ Create Jungle Biome
     JFLX::log("World Generation: ", "Generating Jungle Biome.", JFLX::LOGTYPE::SUCCESS);
-    std::unordered_map<uint16_t, std::array<uint16_t, 2>> replaceMapBlock = {
-        {TILES::BLOCKS::GRASS,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::BLOCKS::DIRT,       {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::BLOCKS::SHALE,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::BLOCKS::ANDESITE,   {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::BLOCKS::SLATE,      {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::BLOCKS::GNEISS,     {TILES::BLOCKS::JUNGLEGRASS, TILES::WALLS::JUNGLEGRASS}},
+    std::unordered_map<TILES::BLOCKS::ID, TILES::TileArray> replaceMapBlock = {
+        {TILES::BLOCKS::ID::GRASS,      {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::BLOCKS::ID::DIRT,       {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::BLOCKS::ID::SHALE,      {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::BLOCKS::ID::ANDESITE,   {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::BLOCKS::ID::SLATE,      {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::BLOCKS::ID::GNEISS,     {TILES::BLOCKS::ID::JUNGLEGRASS, TILES::WALLS::ID::JUNGLEGRASS}},
     };
 
-    std::unordered_map<uint16_t, std::array<uint16_t, 2>> replaceMapWall = {
-        {TILES::WALLS::GRASS,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::WALLS::DIRT,        {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::WALLS::SHALE,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::WALLS::ANDESITE,    {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::WALLS::SLATE,       {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
-        {TILES::WALLS::GNEISS,      {TILES::BLOCKS::NOCHANGE, TILES::WALLS::JUNGLEGRASS}},
+    std::unordered_map<TILES::WALLS::ID, TILES::TileArray> replaceMapWall = {
+        {TILES::WALLS::ID::GRASS,       {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::WALLS::ID::DIRT,        {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::WALLS::ID::SHALE,       {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::WALLS::ID::ANDESITE,    {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::WALLS::ID::SLATE,       {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
+        {TILES::WALLS::ID::GNEISS,      {TILES::BLOCKS::ID::NOCHANGE, TILES::WALLS::ID::JUNGLEGRASS}},
     };
 
     int jungleRadius = static_cast<int>((sizeX/7)+(rand()%25));
